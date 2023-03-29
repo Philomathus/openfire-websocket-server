@@ -1,0 +1,43 @@
+services:
+  xmpp-server:
+    container_name: spring-xmpp-websocket-server
+    image: smartinrub/spring-xmpp-websocket-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - spring-postgres
+      - openfire
+  spring-postgres:
+    container_name: spring-postgres
+    image: "postgres:14.6"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: xmpp
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: chat
+  openfire-mysql:
+    container_name: openfire-mysql
+    image: mysql/mysql-server:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: openfire
+      MYSQL_USER: openfireuser
+      MYSQL_PASSWORD: openfirepasswd
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+  openfire:
+    container_name: openfire
+    image: nasqueron/openfire:4.7.1
+    ports:
+      - "9090:9090"
+      - "5222:5222"
+      - "5269:5269"
+      - "5223:5223"
+      - "7443:7443"
+      - "7777:7777"
+      - "7070:7070"
+      - "5229:5229"
+      - "5275:5275"
+    depends_on:
+      - openfire-mysql
