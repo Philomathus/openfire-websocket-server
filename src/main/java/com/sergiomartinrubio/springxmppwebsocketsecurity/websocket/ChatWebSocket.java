@@ -22,7 +22,7 @@ public class ChatWebSocket {
     private final WebSocketToXmppBridge webSocketToXmppBridge;
 
     public ChatWebSocket() {
-        this.webSocketToXmppBridge = (WebSocketToXmppBridge) SpringContext.getApplicationContext().getBean("XMPPFacade");
+        this.webSocketToXmppBridge = (WebSocketToXmppBridge) SpringContext.getApplicationContext().getBean("webSocketToXmppBridge");
     }
 
     @OnOpen

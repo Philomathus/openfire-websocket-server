@@ -1,5 +1,6 @@
 package com.sergiomartinrubio.springxmppwebsocketsecurity.xmpp;
 
+import com.sergiomartinrubio.springxmppwebsocketsecurity.model.MessageType;
 import com.sergiomartinrubio.springxmppwebsocketsecurity.model.WebsocketMessage;
 import com.sergiomartinrubio.springxmppwebsocketsecurity.websocket.utils.WebSocketTextMessageHelper;
 import lombok.RequiredArgsConstructor;
@@ -20,21 +21,14 @@ public class XmppToWebSocketTransmitter {
     private final WebSocketTextMessageHelper webSocketTextMessageHelper;
 
     public void sendPersonalResponse(Message message, Session session) {
-        log.info("New message from '{}' to '{}': {}", message.getFrom(), message.getTo(), message.getBody());
-        String messageFrom = message.getFrom().getLocalpartOrNull().toString();
-        String to = message.getTo().getLocalpartOrNull().toString();
-        String content = message.getBody();
-        webSocketTextMessageHelper.send(
-                session,
-                WebsocketMessage.builder()
-                        .from(messageFrom)
-                        .to(to)
-                        .content(content)
-                        .messageType(PERSONAL_MESSAGE).build()
-        );
+        sendResponse(message, session, PERSONAL_MESSAGE);
     }
 
     public void sendGroupResponse(Message message, Session session) {
+        sendResponse(message, session, GROUP_MESSAGE);
+    }
+
+    private void sendResponse(Message message, Session session, MessageType messageType) {
         log.info("New message from '{}' to '{}': {}", message.getFrom(), message.getTo(), message.getBody());
         String messageFrom = message.getFrom().getLocalpartOrNull().toString();
         String to = message.getTo().getLocalpartOrNull().toString();
@@ -45,7 +39,7 @@ public class XmppToWebSocketTransmitter {
                         .from(messageFrom)
                         .to(to)
                         .content(content)
-                        .messageType(GROUP_MESSAGE).build()
+                        .messageType(messageType).build()
         );
     }
 }

@@ -34,7 +34,7 @@ public class WebSocketToXmppBridge {
         //      3. Return token to client and store it in a cookie or local storage
         //      4. When starting a websocket session check if the token is still valid and bypass XMPP authentication
 
-        XMPPTCPConnection connection = xmppClient.connect(username, "placeHolder");
+        XMPPTCPConnection connection = xmppClient.connect(username, "Ciretose@206");
 
         if (connection == null) {
             log.info("XMPP connection was not established. Closing websocket session...");
@@ -53,7 +53,8 @@ public class WebSocketToXmppBridge {
                 xmppClient.login(connection);
             } catch (XmppGenericException ex) {
                 //TODO: check if user with username really exists
-                xmppClient.createAccount( username, "placeholder_password" );
+                log.info("The user does not exist. Creating a new account.");
+                xmppClient.createAccount( username, "Ciretose@206" );
                 xmppClient.login(connection);
             }
         } catch(Exception e) {
@@ -83,16 +84,19 @@ public class WebSocketToXmppBridge {
                     xmppClient.sendMessage(connection, message.getContent(), message.getTo());
                 }
                 case GROUP_MESSAGE -> {
-                    xmppClient.sendGroupMessage(connection, message.getContent(), message.getTo());
+                    xmppClient.sendGroupMessage(connection, message.getContent(), message.getGroupId());
                 }
                 case CREATE_GROUP -> {
-                    xmppClient.createGroup(message.getTo());
+                    xmppClient.createGroup(connection, session, message.getGroupId());
                 }
                 case JOIN_GROUP -> {
-                    xmppClient.joinGroup(connection, session, message.getTo());
+                    xmppClient.joinGroup(connection, session, message.getGroupId());
                 }
                 case LEAVE_GROUP -> {
-                    xmppClient.leaveGroup(connection, message.getTo());
+                    xmppClient.leaveGroup(connection, message.getGroupId());
+                }
+                case DESTROY_GROUP -> {
+                    xmppClient.destroyRoom(connection, message.getGroupId());
                 }
                 case LOG_OUT -> {
                     disconnect(session);
@@ -120,6 +124,7 @@ public class WebSocketToXmppBridge {
 
         xmppClient.disconnect(connection);
         CONNECTIONS.remove(session);
+        log.info("Disconnected");
     }
 
     private void handleXMPPGenericException(Session session, XMPPTCPConnection connection, Exception e) {

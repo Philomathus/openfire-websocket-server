@@ -10,6 +10,7 @@ public class MessageDecoder implements Decoder.Text<WebsocketMessage> {
 
     @Override
     public WebsocketMessage decode(String message) {
+        System.out.println(message);
         Gson gson = new Gson();
         return gson.fromJson(message, WebsocketMessage.class);
     }

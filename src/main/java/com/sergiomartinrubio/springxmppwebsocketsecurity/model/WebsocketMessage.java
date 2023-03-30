@@ -8,6 +8,7 @@ import lombok.Value;
 public class WebsocketMessage {
     String from;
     String to;
+    String groupId;
     String content;
     MessageType messageType;
 }

@@ -15,6 +15,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -150,11 +151,17 @@ public class XmppClient {
         }
     }
 
-    public void createGroup(String groupId) {
+    public void createGroup(XMPPTCPConnection connection, Session webSocketSession, String groupId) {
         try {
-            MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(adminXmppConnection)
+            MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
                     .getMultiUserChat(JidCreate.entityBareFrom(groupId + "@" + xmppProperties.getGroupDomain()));
-            multiUserChat.create(Resourcepart.from(groupId));
+            multiUserChat.create(connection.getUser().getResourcepart());
+            FillableForm form = multiUserChat.getConfigurationForm().getFillableForm();
+            form.setAnswer("muc#roomconfig_persistentroom", true);
+            form.setAnswer("muc#roomconfig_maxusers", 100);
+            multiUserChat.sendConfigurationForm(form);
+            multiUserChat.addMessageListener( message -> xmppToWebSocketTransmitter
+                    .sendGroupResponse(message, webSocketSession) );
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,6 +194,16 @@ public class XmppClient {
                     .getMultiUserChat(JidCreate.entityBareFrom(groupId + "@" + xmppProperties.getGroupDomain()));
             multiUserChat.leave();
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void destroyRoom(XMPPTCPConnection connection, String groupId) {
+        try {
+            MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
+                    .getMultiUserChat(JidCreate.entityBareFrom(groupId + '@' + xmppProperties.getGroupDomain()));
+            multiUserChat.destroy("The owner left", null);
+        } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
