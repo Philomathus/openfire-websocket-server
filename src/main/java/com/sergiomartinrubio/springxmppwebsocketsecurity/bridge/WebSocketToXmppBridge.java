@@ -83,28 +83,28 @@ public class WebSocketToXmppBridge {
                 case PERSONAL_MESSAGE -> {
                     xmppClient.sendMessage(connection, message.getContent(), message.getTo());
                 }
-                case GROUP_MESSAGE -> {
-                    xmppClient.sendGroupMessage(connection, message.getContent(), message.getGroupId());
+                case ROOM_MESSAGE -> {
+                    xmppClient.sendRoomMessage(connection, message.getContent(), message.getRoomId());
                 }
-                case CREATE_GROUP -> {
-                    xmppClient.createGroup(connection, session, message.getGroupId());
+                case CREATE_ROOM -> {
+                    xmppClient.createRoom(connection, session, message.getRoomId());
                 }
-                case JOIN_GROUP -> {
-                    xmppClient.joinGroup(connection, session, message.getGroupId());
+                case JOIN_ROOM -> {
+                    xmppClient.joinRoom(connection, session, message.getRoomId());
                 }
-                case LEAVE_GROUP -> {
-                    xmppClient.leaveGroup(connection, message.getGroupId());
+                case LEAVE_ROOM -> {
+                    xmppClient.leaveRoom(connection, message.getRoomId());
                 }
-                case DESTROY_GROUP -> {
-                    xmppClient.destroyRoom(connection, message.getGroupId());
+                case DESTROY_ROOM -> {
+                    xmppClient.destroyRoom(connection, message.getRoomId());
                 }
-                case LOG_OUT -> {
+                case LOGOUT -> {
                     disconnect(session);
                 }
                 default -> log.warn("Message type not implemented.");
             }
         } catch (Exception e) {
-            handleXMPPGenericException(session, connection, e);
+//            handleXMPPGenericException(session, connection, e);
         }
     }
 

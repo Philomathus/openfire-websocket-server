@@ -20,7 +20,6 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -92,6 +91,18 @@ public class XmppClient {
         return connection;
     }
 
+    public void login(XMPPTCPConnection connection) {
+        try {
+            connection.login();
+        } catch (XMPPException | SmackException | IOException | InterruptedException e) {
+            log.error("Login to XMPP server with user {} failed.", connection.getUser(), e);
+
+            EntityFullJid user = connection.getUser();
+            throw new XmppGenericException(user == null ? "unknown" : user.toString(), e);
+        }
+        log.info("User '{}' logged in.", connection.getUser());
+    }
+
     public void createAccount(String username, String password) {
         AccountManager accountManager = AccountManager.getInstance(adminXmppConnection);
         accountManager.sensitiveOperationOverInsecureConnection(true);
@@ -108,18 +119,6 @@ public class XmppClient {
         log.info("Account for user '{}' created.", username);
     }
 
-    public void login(XMPPTCPConnection connection) {
-        try {
-            connection.login();
-        } catch (XMPPException | SmackException | IOException | InterruptedException e) {
-            log.error("Login to XMPP server with user {} failed.", connection.getUser(), e);
-
-            EntityFullJid user = connection.getUser();
-            throw new XmppGenericException(user == null ? "unknown" : user.toString(), e);
-        }
-        log.info("User '{}' logged in.", connection.getUser());
-    }
-
     public void addIncomingMessageListener(XMPPTCPConnection connection, Session webSocketSession) {
         ChatManager chatManager = ChatManager.getInstanceFor(connection);
         chatManager.addIncomingListener((from, message, chat) -> xmppToWebSocketTransmitter
@@ -127,22 +126,10 @@ public class XmppClient {
         log.info("Incoming message listener for user '{}' added.", connection.getUser());
     }
 
-//    public void addIncomingGroupMessageListener(XMPPTCPConnection connection, Session webSocketSession, String groupId) {
-//        MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
-//
-//        for(EntityBareJid jid : multiUserChatManager.getJoinedRooms()) {
-//            MultiUserChat multiUserChat = multiUserChatManager.getMultiUserChat(jid);
-//            multiUserChat.addMessageListener( message -> xmppToWebSocketTransmitter
-//                    .sendGroupResponse(message, webSocketSession) );
-//        }
-//
-//        log.info("Incoming group message listener for user '{}' added.", connection.getUser());
-//    }
-
-    public void joinGroup(XMPPTCPConnection connection, Session webSocketSession, String groupId) {
+    public void joinRoom(XMPPTCPConnection connection, Session webSocketSession, String roomId) {
         try {
             MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
-                    .getMultiUserChat(JidCreate.entityBareFrom(groupId + "@" + xmppProperties.getGroupDomain()));
+                    .getMultiUserChat(JidCreate.entityBareFrom(roomId + "@" + xmppProperties.getRoomDomain()));
             multiUserChat.join(connection.getUser().getResourcepart());
             multiUserChat.addMessageListener( message -> xmppToWebSocketTransmitter
                     .sendGroupResponse(message, webSocketSession) );
@@ -151,13 +138,13 @@ public class XmppClient {
         }
     }
 
-    public void createGroup(XMPPTCPConnection connection, Session webSocketSession, String groupId) {
+    public void createRoom(XMPPTCPConnection connection, Session webSocketSession, String roomId) {
         try {
             MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
-                    .getMultiUserChat(JidCreate.entityBareFrom(groupId + "@" + xmppProperties.getGroupDomain()));
+                    .getMultiUserChat(JidCreate.entityBareFrom(roomId + "@" + xmppProperties.getRoomDomain()));
             multiUserChat.create(connection.getUser().getResourcepart());
             FillableForm form = multiUserChat.getConfigurationForm().getFillableForm();
-            form.setAnswer("muc#roomconfig_persistentroom", true);
+//            form.setAnswer("muc#roomconfig_persistentroom", true);
             form.setAnswer("muc#roomconfig_maxusers", 100);
             multiUserChat.sendConfigurationForm(form);
             multiUserChat.addMessageListener( message -> xmppToWebSocketTransmitter
@@ -178,30 +165,31 @@ public class XmppClient {
         }
     }
 
-    public void sendGroupMessage(XMPPTCPConnection connection, String message, String groupId) {
+    public void sendRoomMessage(XMPPTCPConnection connection, String message, String roomId) {
         try {
+            EntityBareJid groupJid = JidCreate.entityBareFrom(roomId + "@" + xmppProperties.getRoomDomain());
             MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
-                    .getMultiUserChat(JidCreate.entityBareFrom(groupId + "@" + xmppProperties.getGroupDomain()));
+                    .getMultiUserChat(groupJid);
             multiUserChat.sendMessage(message);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void leaveGroup(XMPPTCPConnection connection, String groupId) {
+    public void leaveRoom(XMPPTCPConnection connection, String roomId) {
         try {
             MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
-                    .getMultiUserChat(JidCreate.entityBareFrom(groupId + "@" + xmppProperties.getGroupDomain()));
+                    .getMultiUserChat(JidCreate.entityBareFrom(roomId + "@" + xmppProperties.getRoomDomain()));
             multiUserChat.leave();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void destroyRoom(XMPPTCPConnection connection, String groupId) {
+    public void destroyRoom(XMPPTCPConnection connection, String roomId) {
         try {
             MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor(connection)
-                    .getMultiUserChat(JidCreate.entityBareFrom(groupId + '@' + xmppProperties.getGroupDomain()));
+                    .getMultiUserChat(JidCreate.entityBareFrom(roomId + '@' + xmppProperties.getRoomDomain()));
             multiUserChat.destroy("The owner left", null);
         } catch(Exception e) {
             throw new RuntimeException(e);

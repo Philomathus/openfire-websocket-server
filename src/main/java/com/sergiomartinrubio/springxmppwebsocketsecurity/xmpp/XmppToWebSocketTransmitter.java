@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
 
-import static com.sergiomartinrubio.springxmppwebsocketsecurity.model.MessageType.GROUP_MESSAGE;
+import static com.sergiomartinrubio.springxmppwebsocketsecurity.model.MessageType.ROOM_MESSAGE;
 import static com.sergiomartinrubio.springxmppwebsocketsecurity.model.MessageType.PERSONAL_MESSAGE;
 
 @Slf4j
@@ -25,7 +25,9 @@ public class XmppToWebSocketTransmitter {
     }
 
     public void sendGroupResponse(Message message, Session session) {
-        sendResponse(message, session, GROUP_MESSAGE);
+
+        System.out.println(message.getQName().toString());
+        sendResponse(message, session, ROOM_MESSAGE);
     }
 
     private void sendResponse(Message message, Session session, MessageType messageType) {

@@ -1,0 +1,24 @@
+server:
+  port: 43000
+  tomcat:
+    threads:
+      max: 1000
+      min-spare: 50
+    max-connections: 81920
+  ssl:
+    enabled: false
+    key-store: classpath:ws_xmpp.jks
+    key-store-type: pkcs12
+    key-store-password: password
+    key-password: password
+    key-alias: ws_xmpp
+  shutdown: graceful
+
+xmpp:
+  port: 5222
+  host: 16.163.77.104
+  domain: feiwin.com
+  roomDomain: conference.feiwin.com
+  adminUsername: admin
+  adminPassword: root
+  userPassword: Ciretose@206

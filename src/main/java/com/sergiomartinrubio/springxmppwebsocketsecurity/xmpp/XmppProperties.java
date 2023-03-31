@@ -28,15 +28,15 @@ public class XmppProperties {
      */
     private String domain;
 
-    private String groupDomain;
+    private String roomDomain;
+
+    private String adminUsername;
+
+    private String adminPassword;
 
     /**
      * The placeholder password for all XMPP accounts.
      */
     private String userPassword;
-
-    private String adminUsername;
-
-    private String adminPassword;
 
 }

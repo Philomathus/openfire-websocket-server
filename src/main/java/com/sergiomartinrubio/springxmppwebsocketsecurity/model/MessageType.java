@@ -2,7 +2,7 @@ package com.sergiomartinrubio.springxmppwebsocketsecurity.model;
 
 public enum MessageType {
     //request
-    PERSONAL_MESSAGE, GROUP_MESSAGE, CREATE_GROUP, JOIN_GROUP, LEAVE_GROUP, DESTROY_GROUP, LOG_OUT,
+    PERSONAL_MESSAGE, ROOM_MESSAGE, CREATE_ROOM, JOIN_ROOM, LEAVE_ROOM, DESTROY_ROOM, LOGOUT,
     //response
     LOGGED_IN, ERROR, FORBIDDEN
 }
