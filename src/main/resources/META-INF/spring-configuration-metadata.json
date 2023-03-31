@@ -1,0 +1,52 @@
+{
+  "groups": [
+    {
+      "name": "openfire",
+      "type": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "openfire.admin-password",
+      "type": "java.lang.String",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    },
+    {
+      "name": "openfire.admin-username",
+      "type": "java.lang.String",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    },
+    {
+      "name": "openfire.domain",
+      "type": "java.lang.String",
+      "description": "The XMPP domain is what follows after the '@' sign in XMPP addresses (JIDs).",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    },
+    {
+      "name": "openfire.host",
+      "type": "java.lang.String",
+      "description": "The address of the server.",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    },
+    {
+      "name": "openfire.port",
+      "type": "java.lang.Integer",
+      "description": "The port to use (usually 5222).",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "openfire.room-domain",
+      "type": "java.lang.String",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    },
+    {
+      "name": "openfire.user-password",
+      "type": "java.lang.String",
+      "description": "The placeholder password for all XMPP accounts.",
+      "sourceType": "com.feiwin.openfirewebsocketserver.config.OpenfireProperties"
+    }
+  ],
+  "hints": []
+}

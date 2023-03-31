@@ -1,4 +1,4 @@
-package com.sergiomartinrubio.springxmppwebsocketsecurity.config;
+package com.feiwin.openfirewebsocketserver.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -12,10 +12,15 @@ public class SpringContext implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.context = context;
+        SpringContext.context = context;
     }
 
     public static ApplicationContext getApplicationContext() {
         return context;
+    }
+
+    public static <T> T getBean(Class<T> beanClass)
+    {
+        return context.getBean(beanClass);
     }
 }

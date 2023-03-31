@@ -1,4 +1,4 @@
-package com.sergiomartinrubio.springxmppwebsocketsecurity.model;
+package com.feiwin.openfirewebsocketserver.model;
 
 import lombok.Builder;
 import lombok.Value;

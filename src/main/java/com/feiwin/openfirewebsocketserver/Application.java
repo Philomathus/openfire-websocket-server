@@ -1,4 +1,4 @@
-package com.sergiomartinrubio.springxmppwebsocketsecurity;
+package com.feiwin.openfirewebsocketserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

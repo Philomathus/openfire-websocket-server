@@ -1,4 +1,4 @@
-package com.sergiomartinrubio.springxmppwebsocketsecurity.xmpp;
+package com.feiwin.openfirewebsocketserver.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "xmpp")
-public class XmppProperties {
+@ConfigurationProperties(prefix = "openfire")
+public class OpenfireProperties {
 
     /**
      * The address of the server.

@@ -1,15 +1,17 @@
-package com.sergiomartinrubio.springxmppwebsocketsecurity.websocket.utils;
+package com.feiwin.openfirewebsocketserver.utils;
 
 import com.google.gson.Gson;
-import com.sergiomartinrubio.springxmppwebsocketsecurity.model.WebsocketMessage;
+import com.feiwin.openfirewebsocketserver.model.WebsocketMessage;
 
-import javax.websocket.Encoder;
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.Encoder;
+import jakarta.websocket.EndpointConfig;
 
 public class MessageEncoder implements Encoder.Text<WebsocketMessage> {
+
+    private final static Gson gson = new Gson();
+
     @Override
     public String encode(WebsocketMessage message) {
-        Gson gson = new Gson();
         return gson.toJson(message);
     }
 

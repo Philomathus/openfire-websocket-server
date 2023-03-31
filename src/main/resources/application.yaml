@@ -14,11 +14,11 @@ server:
     key-alias: ws_xmpp
   shutdown: graceful
 
-xmpp:
+openfire:
   port: 5222
   host: 16.163.77.104
   domain: feiwin.com
   roomDomain: conference.feiwin.com
-  adminUsername: admin
-  adminPassword: root
-  userPassword: Ciretose@206
+  admin-username: admin
+  admin-password: root
+  user-password: Ciretose@206
